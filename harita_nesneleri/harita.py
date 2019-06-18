@@ -1,5 +1,7 @@
+import tcod as libtcod
 from random import randint
 
+from varlik import Varlik
 from harita_nesneleri.tile import Tile
 from harita_nesneleri.dikdortgen import Dikdortgen
 
@@ -16,7 +18,8 @@ class Harita:
 
         return tiles
 
-    def make_harita(self, max_oda_sayisi, oda_min_boyut, oda_max_boyut, harita_genislik, harita_yukseklik, oyuncu):
+    def make_harita(self, max_oda_sayisi, oda_min_boyut, oda_max_boyut, harita_genislik, harita_yukseklik, oyuncu,
+                    varliklar, maks_oda_basina_dusman):
         odalar = []
         oda_sayisi = 0
 
@@ -50,6 +53,8 @@ class Harita:
                         self.create_dikey_tunel(onceki_y, yeni_y, onceki_x)
                         self.create_yatay_tunel(onceki_x, yeni_x, onceki_y)
 
+                self.place_varlik(yeni_oda, varliklar, maks_oda_basina_dusman)
+
                 odalar.append(yeni_oda)
                 oda_sayisi += 1
 
@@ -68,6 +73,22 @@ class Harita:
         for y in range(min(y1, y2), max(y1, y2) + 1):
             self.tiles[x][y].engel = False
             self.tiles[x][y].gorus_engel = False
+
+    def place_varlik(self, oda, varliklar, maks_oda_basina_dusman):
+
+        dusman_sayisi = randint(0, maks_oda_basina_dusman)
+
+        for i in range(dusman_sayisi):
+            x = randint(oda.x1 + 1, oda.x2 - 1)
+            y = randint(oda.y1 + 1, oda.y2 - 1)
+
+            if not any([varlik for varlik in varliklar if varlik.x == x and varlik.y == y]):
+                if randint(0, 100) < 80:
+                    dusman = Varlik(x, y, 'a', libtcod.dark_red, 'Er', engel=True)
+                else:
+                    dusman = Varlik(x, y, 'b', libtcod.light_red, 'Onbasi', engel=True)
+
+                varliklar.append(dusman)
 
     def is_engelli(self, x, y):
         if self.tiles[x][y].engel:

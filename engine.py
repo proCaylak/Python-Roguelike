@@ -1,6 +1,6 @@
 import tcod as libtcod
 from girdi_kontrol import tus_kontrol
-from varlik import Varlik
+from varlik import Varlik, engelleyen_varlik_kontrolu
 from gorus_fonk import initialize_gorus, hesapla_gorus
 from render_fonk import clear_all, render_all
 from harita_nesneleri.harita import Harita
@@ -20,6 +20,8 @@ def main():
     gorus_acik_renk_duvar = True
     gorus_yaricap = 10
 
+    maks_oda_basina_dusman = 3
+
     renkler = {
         'koyu_duvar': libtcod.Color(0, 0, 100),
         'koyu_zemin': libtcod.Color(50, 50, 150),
@@ -27,9 +29,8 @@ def main():
         'acik_zemin': libtcod.Color(200, 180, 50)
     }
 
-    oyuncu = Varlik(int(ekran_genislik / 2), int(ekran_yukseklik / 2), '@', libtcod.green)
-    npc = Varlik(int(ekran_genislik / 2 - 5), int(ekran_yukseklik / 2 - 5), '@', libtcod.yellow)
-    varliklar = [npc, oyuncu]
+    oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True)
+    varliklar = [oyuncu]
 
     libtcod.console_set_custom_font('arial10x10.png',
                                     libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
@@ -41,7 +42,7 @@ def main():
 
     harita = Harita(harita_genislik, harita_yukseklik)
     harita.make_harita(max_oda_sayisi, oda_min_boyut, oda_max_boyut,
-                       harita_genislik, harita_yukseklik, oyuncu)
+                       harita_genislik, harita_yukseklik, oyuncu, varliklar, maks_oda_basina_dusman)
 
     gorus_tekrar_hesapla = True
 
@@ -73,10 +74,19 @@ def main():
 
         if move:
             dx, dy = move
-            if not harita.is_engelli(oyuncu.x + dx, oyuncu.y + dy):
-                oyuncu.move(dx, dy)
+            yol_x = oyuncu.x + dx
+            yol_y = oyuncu.y + dy
 
-                gorus_tekrar_hesapla = True
+            if not harita.is_engelli(yol_x, yol_y):
+                hedef = engelleyen_varlik_kontrolu(varliklar, yol_x, yol_y)
+
+                if hedef:
+                    print('Bir dusmana tokat attin: ' + hedef.isim)
+                else:
+                    oyuncu.move(dx, dy)
+
+                    gorus_tekrar_hesapla = True
+
         if exit:
             return True
 
