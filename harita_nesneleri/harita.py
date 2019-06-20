@@ -1,6 +1,8 @@
 import tcod as libtcod
 from random import randint
 
+from karakterler.savasci import Savasci
+from karakterler.bilgisayar import StandartDusman
 from varlik import Varlik
 from harita_nesneleri.tile import Tile
 from harita_nesneleri.dikdortgen import Dikdortgen
@@ -84,9 +86,17 @@ class Harita:
 
             if not any([varlik for varlik in varliklar if varlik.x == x and varlik.y == y]):
                 if randint(0, 100) < 80:
-                    dusman = Varlik(x, y, 'a', libtcod.dark_red, 'Er', engel=True)
+                    savasci_karakter = Savasci(can=10, zirh=0, guc=3)
+                    yapay_zeka = StandartDusman()
+
+                    dusman = Varlik(x, y, 'a', libtcod.dark_red, 'Er', engel=True,
+                                    savasci=savasci_karakter, bilgisayar=yapay_zeka)
                 else:
-                    dusman = Varlik(x, y, 'b', libtcod.light_red, 'Onbasi', engel=True)
+                    savasci_karakter = Savasci(can=16, zirh=1, guc=4)
+                    yapay_zeka = StandartDusman()
+
+                    dusman = Varlik(x, y, 'b', libtcod.light_red, 'Onbasi', engel=True,
+                                    savasci=savasci_karakter, bilgisayar=yapay_zeka)
 
                 varliklar.append(dusman)
 

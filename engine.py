@@ -1,4 +1,7 @@
 import tcod as libtcod
+
+from karakterler.savasci import Savasci
+from oyun_durumu import Tur
 from girdi_kontrol import tus_kontrol
 from varlik import Varlik, engelleyen_varlik_kontrolu
 from gorus_fonk import initialize_gorus, hesapla_gorus
@@ -29,7 +32,8 @@ def main():
         'acik_zemin': libtcod.Color(200, 180, 50)
     }
 
-    oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True)
+    savasci_karakter = Savasci(can=30, zirh=2, guc=5)
+    oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True, savasci=savasci_karakter)
     varliklar = [oyuncu]
 
     libtcod.console_set_custom_font('arial10x10.png',
@@ -50,6 +54,8 @@ def main():
 
     tus = libtcod.Key()
     fare = libtcod.Mouse()
+
+    oyun_durumu = Tur.OYUNCU
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, tus, fare)
@@ -72,7 +78,7 @@ def main():
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
 
-        if move:
+        if move and oyun_durumu == Tur.OYUNCU:
             dx, dy = move
             yol_x = oyuncu.x + dx
             yol_y = oyuncu.y + dy
@@ -86,12 +92,20 @@ def main():
                     oyuncu.move(dx, dy)
 
                     gorus_tekrar_hesapla = True
+                oyun_durumu = Tur.DUSMAN
 
         if exit:
             return True
 
         if fullscreen:
             libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+
+        if oyun_durumu == Tur.DUSMAN:
+            for varlik in varliklar:
+                if varlik.bilgisayar:
+                    varlik.bilgisayar.tur()
+
+            oyun_durumu = Tur.OYUNCU
 
 
 if __name__ == '__main__':
