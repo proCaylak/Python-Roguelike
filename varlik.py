@@ -7,7 +7,7 @@ from render_fonk import RenderSirasi
 class Varlik:
 
     def __init__(self, x, y, char, renk, isim, engel=False, render_sirasi=RenderSirasi.CESET, savasci=None,
-                 bilgisayar=None):
+                 bilgisayar=None, esya=None, envanter=None):
         self.x = x
         self.y = y
         self.char = char
@@ -17,12 +17,20 @@ class Varlik:
         self.render_sirasi = render_sirasi
         self.savasci = savasci
         self.bilgisayar = bilgisayar
+        self.esya = esya
+        self.envanter = envanter
 
         if self.savasci:
             self.savasci.owner = self
 
         if self.bilgisayar:
             self.bilgisayar.owner = self
+
+        if self.esya:
+            self.esya.owner = self
+
+        if self.envanter:
+            self.envanter.owner = self
 
     def move(self, dx, dy):
         self.x += dx

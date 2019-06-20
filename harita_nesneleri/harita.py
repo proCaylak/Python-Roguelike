@@ -1,6 +1,8 @@
 import tcod as libtcod
 from random import randint
 
+from esya_fonk import iyilestir
+from esyalar.esya import Esya
 from render_fonk import RenderSirasi
 from karakterler.savasci import Savasci
 from karakterler.bilgisayar import StandartDusman
@@ -22,7 +24,7 @@ class Harita:
         return tiles
 
     def make_harita(self, max_oda_sayisi, oda_min_boyut, oda_max_boyut, harita_genislik, harita_yukseklik, oyuncu,
-                    varliklar, maks_oda_basina_dusman):
+                    varliklar, maks_oda_basina_dusman, maks_oda_basina_esya):
         odalar = []
         oda_sayisi = 0
 
@@ -56,7 +58,7 @@ class Harita:
                         self.create_dikey_tunel(onceki_y, yeni_y, onceki_x)
                         self.create_yatay_tunel(onceki_x, yeni_x, onceki_y)
 
-                self.place_varlik(yeni_oda, varliklar, maks_oda_basina_dusman)
+                self.place_varlik(yeni_oda, varliklar, maks_oda_basina_dusman, maks_oda_basina_esya)
 
                 odalar.append(yeni_oda)
                 oda_sayisi += 1
@@ -68,7 +70,7 @@ class Harita:
                 self.tiles[x][y].gorus_engel = False
 
     def create_yatay_tunel(self, x1, x2, y):
-        for x in range(min(x1, x2), max(x1, x2) + 1):
+        for x in range(min(x1, x2), max(x1, x2)):
             self.tiles[x][y].engel = False
             self.tiles[x][y].gorus_engel = False
 
@@ -77,9 +79,10 @@ class Harita:
             self.tiles[x][y].engel = False
             self.tiles[x][y].gorus_engel = False
 
-    def place_varlik(self, oda, varliklar, maks_oda_basina_dusman):
+    def place_varlik(self, oda, varliklar, maks_oda_basina_dusman, maks_oda_basina_esya):
 
         dusman_sayisi = randint(0, maks_oda_basina_dusman)
+        esya_sayisi = randint(0, maks_oda_basina_esya)
 
         for i in range(dusman_sayisi):
             x = randint(oda.x1 + 1, oda.x2 - 1)
@@ -101,6 +104,17 @@ class Harita:
                                     savasci=savasci_karakter, bilgisayar=yapay_zeka)
 
                 varliklar.append(dusman)
+
+        for i in range(esya_sayisi):
+            x = randint(oda.x1 + 1, oda.x2 - 1)
+            y = randint(oda.y1 + 1, oda.y2 - 1)
+
+            if not any([varlik for varlik in varliklar if varlik.x == x and varlik.y == y]):
+                esya_esyalar = Esya(kullanim=iyilestir, miktar=4)
+                esya = Varlik(x, y, '+', libtcod.violet, 'Can iksiri', render_sirasi=RenderSirasi.ESYA,
+                              esya=esya_esyalar)
+
+                varliklar.append(esya)
 
     def is_engelli(self, x, y):
         if self.tiles[x][y].engel:

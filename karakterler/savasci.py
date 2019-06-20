@@ -1,6 +1,11 @@
+import tcod as libtcod
+
+from oyun_mesajlari import Mesaj
+
+
 class Savasci:
     def __init__(self, can, zirh, guc):
-        self.max_can = can
+        self.maks_can = can
         self.can = can
         self.zirh = zirh
         self.guc = guc
@@ -11,9 +16,15 @@ class Savasci:
         self.can -= hasar
 
         if self.can <= 0:
-            sonuclar.append({'öldü': self.owner})
+            sonuclar.append({'katledildi': self.owner})
 
         return sonuclar
+
+    def iyilestir(self, miktar):
+        self.can += miktar
+
+        if self.can > self.maks_can:
+            self.can = self.maks_can
 
     def saldir(self, hedef):
         sonuclar = []
@@ -21,14 +32,14 @@ class Savasci:
         hasar = self.guc - hedef.savasci.zirh
 
         if hasar > 0:
-            hedef.savasci.take_hasar(hasar)
-            sonuclar.append({'mesaj': '{0}, şu hedefe saldırdı: {1}\n verilen hasar: {2}'.format(self.owner.isim,
-                                                                                                 hedef.isim,
-                                                                                                 str(hasar))})
+            sonuclar.append({'mesaj': Mesaj(
+                '{0}, su hedefe vurdu: {1}. verilen hasar: {2}'.format(self.owner.isim, hedef.isim, str(hasar)),
+                libtcod.white)})
             sonuclar.extend(hedef.savasci.take_hasar(hasar))
 
         else:
-            sonuclar.append({'mesaj': "{0}, şu hedefe saldırdı ancak hasar veremedi: {1}".format(self.owner.isim,
-                                                                                                 hedef.isim)})
+            sonuclar.append({'mesaj': Mesaj(
+                '{0}, su hedefe vurdu ancak hasar veremedi: {1}'.format(self.owner.isim, hedef.isim),
+                libtcod.white)})
 
         return sonuclar
