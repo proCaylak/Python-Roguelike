@@ -1,6 +1,7 @@
 import tcod as libtcod
 from random import randint
 
+from render_fonk import RenderSirasi
 from karakterler.savasci import Savasci
 from karakterler.bilgisayar import StandartDusman
 from varlik import Varlik
@@ -89,13 +90,14 @@ class Harita:
                     savasci_karakter = Savasci(can=10, zirh=0, guc=3)
                     yapay_zeka = StandartDusman()
 
-                    dusman = Varlik(x, y, 'a', libtcod.dark_red, 'Er', engel=True,
+                    dusman = Varlik(x, y, 'a', libtcod.dark_red, 'Er', engel=True, render_sirasi=RenderSirasi.KARAKTER,
                                     savasci=savasci_karakter, bilgisayar=yapay_zeka)
                 else:
                     savasci_karakter = Savasci(can=16, zirh=1, guc=4)
                     yapay_zeka = StandartDusman()
 
                     dusman = Varlik(x, y, 'b', libtcod.light_red, 'Onbasi', engel=True,
+                                    render_sirasi=RenderSirasi.KARAKTER,
                                     savasci=savasci_karakter, bilgisayar=yapay_zeka)
 
                 varliklar.append(dusman)

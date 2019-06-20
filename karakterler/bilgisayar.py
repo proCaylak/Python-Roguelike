@@ -1,3 +1,18 @@
+import tcod as libtcod
+
+
 class StandartDusman:
-    def tur(self):
-        print(self.owner.isim + ' bu turu pas geçer.')
+    def tur(self, hedef, gorus_harita, harita, varliklar):
+        sonuclar = []
+
+        dusman = self.owner
+        if libtcod.map_is_in_fov(gorus_harita, dusman.x, dusman.y):
+
+            if dusman.mesafe_hedef(hedef) >= 2:
+                dusman.move_hedef_a_star(hedef, harita, varliklar)
+
+            elif hedef.savasci.can > 0:
+                saldiri_sonuclari = dusman.savasci.saldir(hedef)
+                sonuclar.extend(saldiri_sonuclari)
+
+        return sonuclar

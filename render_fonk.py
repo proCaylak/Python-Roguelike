@@ -1,7 +1,15 @@
 import tcod as libtcod
 
+from enum import Enum
 
-def render_all(terminal, varliklar, harita, gorus_harita, gorus_tekrar_hesapla, genislik, yukseklik, renkler):
+
+class RenderSirasi(Enum):
+    CESET = 1
+    ESYA = 2
+    KARAKTER = 3
+
+
+def render_all(terminal, varliklar, oyuncu, harita, gorus_harita, gorus_tekrar_hesapla, genislik, yukseklik, renkler):
     if gorus_tekrar_hesapla:
         for y in range(harita.yukseklik):
             for x in range(harita.genislik):
@@ -17,12 +25,20 @@ def render_all(terminal, varliklar, harita, gorus_harita, gorus_tekrar_hesapla, 
                         harita.tiles[x][y].kesfedildi = True
                 elif harita.tiles[x][y].kesfedildi:
                     if duvar:
-                        libtcod.console_set_char_background(terminal, x, y, renkler.get('koyu_duvar'), libtcod.BKGND_SET)
+                        libtcod.console_set_char_background(terminal, x, y, renkler.get('koyu_duvar'),
+                                                            libtcod.BKGND_SET)
                     else:
-                        libtcod.console_set_char_background(terminal, x, y, renkler.get('koyu_zemin'), libtcod.BKGND_SET)
+                        libtcod.console_set_char_background(terminal, x, y, renkler.get('koyu_zemin'),
+                                                            libtcod.BKGND_SET)
 
-    for varlik in varliklar:
+    varliklar_render_sirali = sorted(varliklar, key=lambda x: x.render_sirasi.value)
+
+    for varlik in varliklar_render_sirali:
         draw_varlik(terminal, varlik, gorus_harita)
+
+    libtcod.console_set_default_foreground(terminal, libtcod.white)
+    libtcod.console_print_ex(terminal, 1, yukseklik - 2, libtcod.BKGND_NONE, libtcod.LEFT,
+                             'CAN: {0:02}/{1:02}'.format(oyuncu.savasci.can, oyuncu.savasci.max_can))
 
     libtcod.console_blit(terminal, 0, 0, genislik, yukseklik, 0, 0, 0)
 

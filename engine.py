@@ -1,11 +1,12 @@
 import tcod as libtcod
 
+from olum_fonk import kill_oyuncu, kill_dusman
 from karakterler.savasci import Savasci
 from oyun_durumu import Tur
 from girdi_kontrol import tus_kontrol
 from varlik import Varlik, engelleyen_varlik_kontrolu
 from gorus_fonk import initialize_gorus, hesapla_gorus
-from render_fonk import clear_all, render_all
+from render_fonk import clear_all, render_all, RenderSirasi
 from harita_nesneleri.harita import Harita
 
 
@@ -33,7 +34,8 @@ def main():
     }
 
     savasci_karakter = Savasci(can=30, zirh=2, guc=5)
-    oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True, savasci=savasci_karakter)
+    oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True, render_sirasi=RenderSirasi.KARAKTER,
+                    savasci=savasci_karakter)
     varliklar = [oyuncu]
 
     libtcod.console_set_custom_font('arial10x10.png',
@@ -64,7 +66,7 @@ def main():
             hesapla_gorus(gorus_harita, oyuncu.x, oyuncu.y,
                           gorus_yaricap, gorus_acik_renk_duvar, gorus_algoritmasi)
 
-        render_all(term, varliklar, harita, gorus_harita, gorus_tekrar_hesapla,
+        render_all(term, varliklar, oyuncu, harita, gorus_harita, gorus_tekrar_hesapla,
                    ekran_genislik, ekran_yukseklik, renkler)
         gorus_tekrar_hesapla = False
 
@@ -78,6 +80,8 @@ def main():
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
 
+        oyuncu_tur_sonuclar = []
+
         if move and oyun_durumu == Tur.OYUNCU:
             dx, dy = move
             yol_x = oyuncu.x + dx
@@ -87,7 +91,9 @@ def main():
                 hedef = engelleyen_varlik_kontrolu(varliklar, yol_x, yol_y)
 
                 if hedef:
-                    print('Bir dusmana tokat attin: ' + hedef.isim)
+                    saldiri_sonuclari = oyuncu.savasci.saldir(hedef)
+                    oyuncu_tur_sonuclar.extend(saldiri_sonuclari)
+
                 else:
                     oyuncu.move(dx, dy)
 
@@ -100,12 +106,47 @@ def main():
         if fullscreen:
             libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
 
+        for oyuncu_tur_sonuc in oyuncu_tur_sonuclar:
+            mesaj = oyuncu_tur_sonuc.get('mesaj')
+            olu_varlik = oyuncu_tur_sonuc.get('öldü')
+
+            if mesaj:
+                print(mesaj)
+
+            if olu_varlik:
+                if olu_varlik == oyuncu:
+                    mesaj, oyun_durumu = kill_oyuncu(olu_varlik)
+                else:
+                    mesaj = kill_dusman(olu_varlik)
+
+                print(mesaj)
+
         if oyun_durumu == Tur.DUSMAN:
             for varlik in varliklar:
                 if varlik.bilgisayar:
-                    varlik.bilgisayar.tur()
+                    dusman_tur_sonuclar = varlik.bilgisayar.tur(oyuncu, gorus_harita, harita, varliklar)
 
-            oyun_durumu = Tur.OYUNCU
+                    for dusman_tur_sonuc in dusman_tur_sonuclar:
+                        mesaj = dusman_tur_sonuc.get('mesaj')
+                        olu_varlik = dusman_tur_sonuc.get('öldü')
+
+                        if mesaj:
+                            print(mesaj)
+
+                        if olu_varlik:
+                            if olu_varlik == oyuncu:
+                                mesaj, oyun_durumu = kill_oyuncu(olu_varlik)
+                            else:
+                                mesaj = kill_dusman(olu_varlik)
+
+                            print(mesaj)
+
+                            if oyun_durumu == Tur.OYUNCU_OLUM:
+                                break
+                    if oyun_durumu == Tur.OYUNCU_OLUM:
+                        break
+            else:
+                oyun_durumu = Tur.OYUNCU
 
 
 if __name__ == '__main__':
