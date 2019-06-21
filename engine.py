@@ -34,7 +34,6 @@ def main():
     gorus_algoritmasi = 0
     gorus_acik_renk_duvar = True
     gorus_yaricap = 10
-    dusman_gorus_katsayi = 0.75
 
     maks_oda_basina_dusman = 3
     maks_oda_basina_esya = 2
@@ -46,7 +45,7 @@ def main():
         'acik_zemin': libtcod.Color(200, 180, 50)
     }
 
-    savasci_karakter = Savasci(can=30, zirh=2, guc=5, gorunmez_tur=20)
+    savasci_karakter = Savasci(can=30, zirh=2, guc=5)
     envanter_esyalar = Envanter(26)
     oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True, render_sirasi=RenderSirasi.KARAKTER,
                     savasci=savasci_karakter, envanter=envanter_esyalar)
@@ -77,6 +76,7 @@ def main():
 
     oyun_durumu = Tur.OYUNCU
     onceki_oyun_durumu = oyun_durumu
+
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, tus, fare)
@@ -147,7 +147,7 @@ def main():
             esya = oyuncu.envanter.esyalar[envanter_index]
 
             if oyun_durumu == Tur.ENVANTER_GOSTER:
-                oyuncu_tur_sonuclar.extend(oyuncu.envanter.kullan(esya))
+                oyuncu_tur_sonuclar.extend(oyuncu.envanter.kullan(esya, varliklar=varliklar, gorus_harita=gorus_harita))
             elif oyun_durumu == Tur.ENVANTER_ESYA_BIRAK:
                 oyuncu_tur_sonuclar.extend(oyuncu.envanter.birak(esya))
 
@@ -166,6 +166,7 @@ def main():
             eklenen_esya = oyuncu_tur_sonuc.get('eklenen_esya')
             harcanan_esya = oyuncu_tur_sonuc.get('harcandi')
             birakilan_esya = oyuncu_tur_sonuc.get('birakilan_esya')
+
 
             if mesaj:
                 mesaj_kaydi.add_mesaj(mesaj)

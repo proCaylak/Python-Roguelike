@@ -1,7 +1,7 @@
 import tcod as libtcod
 from random import randint
 
-from esya_fonk import iyilestir
+from esya_fonk import iyilestir, throw_cirit, gorunmezlik
 from esyalar.esya import Esya
 from render_fonk import RenderSirasi
 from karakterler.savasci import Savasci
@@ -110,9 +110,22 @@ class Harita:
             y = randint(oda.y1 + 1, oda.y2 - 1)
 
             if not any([varlik for varlik in varliklar if varlik.x == x and varlik.y == y]):
-                esya_esyalar = Esya(kullanim=iyilestir, miktar=4)
-                esya = Varlik(x, y, '+', libtcod.violet, 'Can iksiri', render_sirasi=RenderSirasi.ESYA,
-                              esya=esya_esyalar)
+                esya_ihtimal = randint(0, 100)
+                if esya_ihtimal < 55:
+                    esya_esyalar = Esya(kullanim=iyilestir, miktar=4)
+                    esya = Varlik(x, y, '+', libtcod.violet, 'Can iksiri', render_sirasi=RenderSirasi.ESYA,
+                                  esya=esya_esyalar)
+
+                elif esya_ihtimal < 80:
+                    esya_esyalar = Esya(kullanim=throw_cirit, hasar=20, maks_menzil=5)
+                    esya = Varlik(x, y, '!', libtcod.azure, 'Cirit', render_sirasi=RenderSirasi.ESYA,
+                                  esya=esya_esyalar)
+
+                else:
+                    esya_esyalar = Esya(kullanim=gorunmezlik, tur_sayisi=10)
+                    esya = Varlik(x, y, '^', libtcod.light_gray, 'Gorunmezlik pelerini',
+                                  render_sirasi=RenderSirasi.ESYA,
+                                  esya=esya_esyalar)
 
                 varliklar.append(esya)
 

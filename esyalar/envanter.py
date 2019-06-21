@@ -41,7 +41,7 @@ class Envanter:
                 if esya_kullanim_sonuc.get('harcandi'):
                     self.remove_esya(esya_varlik)
 
-            sonuclar.extend(esya_kullanim_sonuclar)
+                sonuclar.extend(esya_kullanim_sonuclar)
 
         return sonuclar
 
