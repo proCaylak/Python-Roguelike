@@ -75,7 +75,7 @@ class Harita:
             self.tiles[x][y].gorus_engel = False
 
     def create_dikey_tunel(self, y1, y2, x):
-        for y in range(min(y1, y2), max(y1, y2) + 1):
+        for y in range(min(y1, y2), max(y1, y2)):
             self.tiles[x][y].engel = False
             self.tiles[x][y].gorus_engel = False
 

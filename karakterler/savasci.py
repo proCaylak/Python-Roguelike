@@ -4,11 +4,12 @@ from oyun_mesajlari import Mesaj
 
 
 class Savasci:
-    def __init__(self, can, zirh, guc):
+    def __init__(self, can, zirh, guc, gorunmez_tur=0):
         self.maks_can = can
         self.can = can
         self.zirh = zirh
         self.guc = guc
+        self.gorunmez_tur = gorunmez_tur
 
     def take_hasar(self, hasar):
         sonuclar = []

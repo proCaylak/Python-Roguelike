@@ -34,6 +34,7 @@ def main():
     gorus_algoritmasi = 0
     gorus_acik_renk_duvar = True
     gorus_yaricap = 10
+    dusman_gorus_katsayi = 0.75
 
     maks_oda_basina_dusman = 3
     maks_oda_basina_esya = 2
@@ -45,7 +46,7 @@ def main():
         'acik_zemin': libtcod.Color(200, 180, 50)
     }
 
-    savasci_karakter = Savasci(can=30, zirh=2, guc=5)
+    savasci_karakter = Savasci(can=30, zirh=2, guc=5, gorunmez_tur=20)
     envanter_esyalar = Envanter(26)
     oyuncu = Varlik(0, 0, '@', libtcod.green, 'HIRSIZ', engel=True, render_sirasi=RenderSirasi.KARAKTER,
                     savasci=savasci_karakter, envanter=envanter_esyalar)
@@ -191,9 +192,26 @@ def main():
                 oyun_durumu = Tur.DUSMAN
 
         if oyun_durumu == Tur.DUSMAN:
+            if oyuncu.savasci.gorunmez_tur > 0:
+                dusman_gorus_katsayi = 0
+                oyuncu.savasci.gorunmez_tur -= 1
+
+                if oyuncu.savasci.gorunmez_tur == 0:
+                    mesaj_kaydi.add_mesaj(Mesaj('Gorunmezlik pelerini tukendi', libtcod.yellow))
+                else:
+                    mesaj_kaydi.add_mesaj(Mesaj('Kalan gorunmezlik tur sayisi: {0}'.format(
+                        oyuncu.savasci.gorunmez_tur), libtcod.yellow))
+
+            else:
+                oyuncu.savasci.gorunmez_tur = 0
+                dusman_gorus_katsayi = 0.75
+
             for varlik in varliklar:
                 if varlik.bilgisayar:
-                    dusman_tur_sonuclar = varlik.bilgisayar.tur(oyuncu, gorus_harita, harita, varliklar)
+
+                    dusman_gorus_yaricap = int(gorus_yaricap * dusman_gorus_katsayi)
+                    dusman_tur_sonuclar = varlik.bilgisayar.tur(oyuncu, gorus_harita, harita, varliklar,
+                                                                dusman_gorus_yaricap)
 
                     for dusman_tur_sonuc in dusman_tur_sonuclar:
                         mesaj = dusman_tur_sonuc.get('mesaj')
