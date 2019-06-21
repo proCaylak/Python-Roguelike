@@ -63,6 +63,6 @@ def throw_cirit(*args, **kwargs):
         sonuclar.extend(hedef.savasci.take_hasar(hasar))
     else:
         sonuclar.append(
-            {'harcandi': False, 'hedef': None, 'Mesaj': Mesaj('Hicbir dusman cirit menzilinde degil!', libtcod.red)})
+            {'harcandi': False, 'hedef': None, 'mesaj': Mesaj('Hicbir dusman cirit menzilinde degil!', libtcod.red)})
 
     return sonuclar

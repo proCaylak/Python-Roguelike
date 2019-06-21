@@ -77,7 +77,6 @@ def main():
     oyun_durumu = Tur.OYUNCU
     onceki_oyun_durumu = oyun_durumu
 
-
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, tus, fare)
 
@@ -167,7 +166,6 @@ def main():
             harcanan_esya = oyuncu_tur_sonuc.get('harcandi')
             birakilan_esya = oyuncu_tur_sonuc.get('birakilan_esya')
 
-
             if mesaj:
                 mesaj_kaydi.add_mesaj(mesaj)
 
@@ -193,6 +191,7 @@ def main():
                 oyun_durumu = Tur.DUSMAN
 
         if oyun_durumu == Tur.DUSMAN:
+            dusman_listesi = []
             if oyuncu.savasci.gorunmez_tur > 0:
                 dusman_gorus_katsayi = 0
                 oyuncu.savasci.gorunmez_tur -= 1
@@ -209,7 +208,7 @@ def main():
 
             for varlik in varliklar:
                 if varlik.bilgisayar:
-
+                    dusman_listesi.append(varlik)
                     dusman_gorus_yaricap = int(gorus_yaricap * dusman_gorus_katsayi)
                     dusman_tur_sonuclar = varlik.bilgisayar.tur(oyuncu, gorus_harita, harita, varliklar,
                                                                 dusman_gorus_yaricap)
@@ -234,7 +233,11 @@ def main():
                     if oyun_durumu == Tur.OYUNCU_OLUM:
                         break
             else:
-                oyun_durumu = Tur.OYUNCU
+                if len(dusman_listesi) == 0:
+                    mesaj_kaydi.add_mesaj(Mesaj('Tebrikler! Haritayi dusmandan temizlediniz.', libtcod.green))
+                    oyun_durumu = Tur.OYUNCU_ZAFER
+                else:
+                    oyun_durumu = Tur.OYUNCU
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ from oyun_durumu import Tur
 def tus_kontrol(tus, oyun_durum):
     if oyun_durum == Tur.OYUNCU:
         return tus_oyuncu_kontrol(tus)
-    elif oyun_durum == Tur.OYUNCU_OLUM:
+    elif oyun_durum in (Tur.OYUNCU_OLUM, Tur.OYUNCU_ZAFER):
         return tus_katledilen_oyuncu_kontrol(tus)
     elif oyun_durum in (Tur.ENVANTER_GOSTER, Tur.ENVANTER_ESYA_BIRAK):
         return tus_envanter_kontrol(tus)

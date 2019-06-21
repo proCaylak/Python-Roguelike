@@ -7,3 +7,4 @@ class Tur(Enum):
     OYUNCU_OLUM = 3
     ENVANTER_GOSTER = 4
     ENVANTER_ESYA_BIRAK = 5
+    OYUNCU_ZAFER = 6
