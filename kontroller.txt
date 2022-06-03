@@ -1,0 +1,23 @@
+﻿-----HAREKET ve SALDIRI-----
+
+NUM 7	NUM 8	NUM 9
+	  ^
+NUM 4	<-|->	NUM 6
+	  v
+NUM 1	NUM 2	NUM 3
+
+
+-----ENVANTER-----
+
+G: Yerden eşya al
+H: Envanter menüsünü aç (Eşya kullanmak için)
+B: Envanter menüsünü aç (Eşya bırakmak için)
+
+a-z: Envanter menüsündeyken eşya seç
+
+
+-----PENCERE AYARI-----
+
+Alt + ENTER: Tam ekran yap
+
+ESC: Oyundan çık (Envanter menüsünde ise Envanterden çık)
